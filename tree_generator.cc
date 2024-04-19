@@ -199,9 +199,9 @@ SSTFile *DiskMetaFile::getSSTFileHead(int level)
   return DiskMetaFile::level_head[level];
 }
 
-static DiskMetaFile* getInstance() {
+static DiskMetaFile& DiskMetaFile::getInstance() {
     static DiskMetaFile instance;  // Guaranteed to be destroyed.
-    return &instance;  // Instantiated on first use.
+    return instance;  // Instantiated on first use.
 }
 
 int PopulateFile(SSTFile *file, vector<pair<long, string>> vector_to_populate_file, int level_to_flush_in)
