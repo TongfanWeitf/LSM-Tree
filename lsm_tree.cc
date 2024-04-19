@@ -16,6 +16,7 @@
 #include "parameter.h"
 #include "tree_generator.h"
 #include "workload_generator.h"
+#include <fstream>
 
 using namespace std;
 using namespace awesome;
@@ -53,6 +54,19 @@ int main(int argc, char *argvx[]) {
     DiskMetaFile::getMetaStatistics();
     //WorkloadExecutor::getWorkloadStatictics(_env);
     //assert(_env->num_inserts == inserted); 
+    // Iterate through all levels and flush the SST files and metadata
+    for (int level = 0; level < DiskMetaFile::getTotalLevelCount(); ++level) {
+         SSTFile* head = DiskMetaFile::getSSTFileHead(level);
+         while (head != nullptr) {
+            std::string filePath = "./data/" + head->file_id + ".sst";
+            writeSSTFileToDisk(*head, filePath);
+            head = head->next_file_ptr;
+        }
+    }
+
+    // Write the meta file
+    std::string metadataPath = "./data/metadata.meta";
+    writeMetadataToDisk(*DiskMetaFile::getInstance(), metadataPath);
   }
 
   printEmulationOutput(_env);
@@ -143,4 +157,38 @@ void printEmulationOutput(EmuEnv* _env) {
   std::cout << _env->num_inserts ;
 
   std::cout << std::endl;
+}
+
+void writeSSTFileToDisk(const SSTFile& sstFile, const string& filePath) {
+    ofstream fileStream(filePath, ios::out | ios::binary);
+    if (!fileStream) {
+        cerr << "Failed to open file for writing: " << filePath << endl;
+        return;
+    }
+
+    // Serialize and write data
+    fileStream << sstFile.min_sort_key << "," << sstFile.max_sort_key;
+    for (const auto& page : sstFile.page_vector) {
+        for (const auto& kv : page.kv_vector) {
+            fileStream << "," << kv.first << ":" << kv.second;
+        }
+    }
+
+    fileStream.close();
+}
+
+void writeMetadataToDisk(const DiskMetaFile& metaFile, const string& metadataPath) {
+    ofstream metaStream(metadataPath, ios::out | ios::binary);
+    if (!metaStream) {
+        cerr << "Failed to open metadata file for writing: " << metadataPath << endl;
+        return;
+    }
+
+    // Write each level's metadata
+    for (int i = 0; i < 32; ++i) {
+        metaStream << "Level " << i << " Head: " << (metaFile.level_head[i] ? metaFile.level_head[i]->file_id : "NULL") << endl;
+        metaStream << "File Count: " << metaFile.level_file_count[i] << ", Current Size: " << metaFile.level_current_size[i] << endl;
+    }
+
+    metaStream.close();
 }
