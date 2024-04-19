@@ -28,7 +28,8 @@ using namespace awesome;
 int parse_arguments2(int argc, char *argvx[], EmuEnv* _env);
 void printEmulationOutput(EmuEnv* _env);
 int runWorkload(EmuEnv* _env);
-
+void writeSSTFileToDisk(const SSTFile& sstFile, const string& filePath);
+void writeMetadataToDisk(const DiskMetaFile& metaFile, const string& metadataPath);
 
 int main(int argc, char *argvx[]) {
 
