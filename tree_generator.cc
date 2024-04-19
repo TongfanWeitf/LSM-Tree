@@ -14,8 +14,6 @@
 #include "parameter.h"
 #include "tree_generator.h"
 
-#include <fstream>
-
 using namespace std;
 using namespace awesome;
 
@@ -563,22 +561,4 @@ int DiskMetaFile::printAllEntries()
   std::cout << "\n**********************************************************************************************************************************\n"
           << std::endl;
   return 1;
-}
-
-void writeSSTFileToDisk(const SSTFile& sstFile, const string& filePath) {
-    ofstream fileStream(filePath, ios::out | ios::binary);
-    if (!fileStream) {
-        cerr << "Failed to open file for writing: " << filePath << endl;
-        return;
-    }
-
-    // Serialize and write data
-    fileStream << sstFile.min_sort_key << "," << sstFile.max_sort_key;
-    for (const auto& page : sstFile.page_vector) {
-        for (const auto& kv : page.kv_vector) {
-            fileStream << "," << kv.first << ":" << kv.second;
-        }
-    }
-
-    fileStream.close();
 }
