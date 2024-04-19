@@ -179,6 +179,7 @@ void writeSSTFileToDisk(const SSTFile& sstFile, const string& filePath) {
 
 void writeMetadataToDisk(const DiskMetaFile& metaFile, const string& metadataPath) {
     ofstream metaStream(metadataPath, ios::out | ios::binary);
+    std::cout << "writing data" <<std::endl ;
     if (!metaStream) {
         cerr << "Failed to open metadata file for writing: " << metadataPath << endl;
         return;
