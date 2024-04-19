@@ -65,10 +65,11 @@ int main(int argc, char *argvx[]) {
     }
 
     // Write the meta file
+    std::cout << "writing data" <<std::endl ;
     std::string metadataPath = "./data/metadata.meta";
     writeMetadataToDisk(*DiskMetaFile::getInstance(), metadataPath);
   }
-
+ 
   printEmulationOutput(_env);
 
   return 0;
