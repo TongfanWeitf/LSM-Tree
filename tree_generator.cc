@@ -199,7 +199,7 @@ SSTFile *DiskMetaFile::getSSTFileHead(int level)
   return DiskMetaFile::level_head[level];
 }
 
-static DiskMetaFile& DiskMetaFile::getInstance() {
+DiskMetaFile& DiskMetaFile::getInstance() {
     static DiskMetaFile instance;  // Guaranteed to be destroyed.
     return instance;  // Instantiated on first use.
 }
