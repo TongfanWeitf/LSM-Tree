@@ -82,6 +82,8 @@ namespace awesome {
     static long global_level_file_counter[32];
     static float disk_run_flush_threshold[32];
 
+    static DiskMetaFile& getInstance()
+
   };
 
 
